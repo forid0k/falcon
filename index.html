@@ -13,6 +13,34 @@
     padding: 20px;
     text-align: center;
   }
+
+  #loginBox {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 100px;
+  }
+
+  input {
+    padding: 10px;
+    width: 200px;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+  }
+
+  #loginBtn {
+    background: #0f0;
+    color: #000;
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
   header {
     font-size: 24px;
     font-weight: bold;
@@ -55,7 +83,6 @@
     font-size: 18px;
   }
 
-  /* Loading spinner */
   .spinner {
     border: 4px solid #0f0;
     border-top: 4px solid transparent;
@@ -71,34 +98,65 @@
     0% { transform: rotate(0deg);}
     100% { transform: rotate(360deg);}
   }
+
+  #mainContent {
+    display: none;
+  }
 </style>
 </head>
 <body>
 
-<header>🎲Falcon Signal</header>
+<div id="loginBox">
+  <h2>🔐 Falcon Login</h2>
+  <input type="text" id="username" placeholder="Username"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button id="loginBtn" onclick="checkLogin()">Login</button>
+  <div id="loginStatus" style="margin-top:10px; font-weight:bold;"></div>
+</div>
 
-<button id="generateBtn" onclick="generateSignal()">Generate Signal</button>
-<button onclick="resetSignals()">Falcon Reset</button>
+<div id="mainContent">
+  <header>🎲 Falcon Signal</header>
 
-<div id="status"></div>
+  <button id="generateBtn" onclick="generateSignal()">Generate Signal</button>
+  <button onclick="resetSignals()">Falcon Reset</button>
 
-<table>
-  <thead>
-    <tr>
-      <th>Time</th>
-      <th>Asset</th>
-      <th>Direction</th>
-      <th>Expiry</th>
-      <th>Strategy</th>
-    </tr>
-  </thead>
-  <tbody id="signalTableBody"></tbody>
-</table>
+  <div id="status"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Asset</th>
+        <th>Direction</th>
+        <th>Expiry</th>
+        <th>Strategy</th>
+      </tr>
+    </thead>
+    <tbody id="signalTableBody"></tbody>
+  </table>
+</div>
 
 <script>
+  const validUsername = "falcon";
+  const validPassword = "forid0kfreefalcon";
+
+  function checkLogin() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const loginStatus = document.getElementById("loginStatus");
+
+    if (username === validUsername && password === validPassword) {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("mainContent").style.display = "block";
+    } else {
+      loginStatus.textContent = "❌ Invalid Username or Password";
+      loginStatus.style.color = "#f00";
+    }
+  }
+
   const assets = ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD'];
   const directions = ['BUY', 'SELL'];
-  const expiries = ['1M', '3M'];
+  const expiries = ['1M'];
   const strategies = ['Price Action', 'EMA', 'Volume'];
 
   const generateBtn = document.getElementById('generateBtn');
@@ -106,10 +164,7 @@
 
   function generateSignal() {
     generateBtn.disabled = true;
-
-    // Randomly pick strategy first for loading display
     const strategy = strategies[Math.floor(Math.random() * strategies.length)];
-
     statusDiv.innerHTML = `<span class="spinner"></span>Generating Signal with strategy: <strong>${strategy}</strong>...`;
 
     setTimeout(() => {
